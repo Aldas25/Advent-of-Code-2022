@@ -1,5 +1,3 @@
-import com.sun.jdi.IntegerType
-
 fun main() {
     fun part1(input: List<String>): Int {
         var answer = 0
