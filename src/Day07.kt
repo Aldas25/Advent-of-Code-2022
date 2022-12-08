@@ -1,11 +1,64 @@
-// for part 1
-val sizeLimit = 100000
-
-// for part 2
-val totalSpace = 70000000
-val needUnused = 30000000
-
 fun main() {
+
+//    for part 1
+    val sizeLimit = 100000
+
+//    for part 2
+    val totalSpace = 70000000
+    val needUnused = 30000000
+
+    class Node(val name: String, val isLeaf: Boolean, val parent: Node?) {
+
+        var size: Int = 0
+
+        constructor(name: String, isLeaf: Boolean, parent: Node?, size: Int) : this(name, isLeaf, parent) {
+            this.size = size
+        }
+
+        val children = mutableListOf<Node>()
+
+        fun addChild(child: Node) {
+            children.add(child)
+        }
+
+        fun calcSizes() {
+            if (isLeaf) return
+
+            size = 0
+            for (child in children) {
+                child.calcSizes()
+                size += child.size
+            }
+        }
+
+        fun part1(): Int {
+            if (isLeaf)
+                return 0
+
+            var ans = 0
+            if (size <= sizeLimit) {
+                ans += size
+            }
+
+            for (child in children) {
+                ans += child.part1()
+            }
+
+            return ans
+        }
+
+        fun part2(removeAtLeast: Int): Int {
+            if (isLeaf) return Int.MAX_VALUE
+
+            var ans = Int.MAX_VALUE
+            if (size >= removeAtLeast) ans = minOf(ans, size)
+            for (child in children)
+                ans = minOf(ans, child.part2(removeAtLeast))
+
+            return ans
+        }
+
+    }
 
     fun part1(root: Node): Int {
         return root.part1()
@@ -77,57 +130,4 @@ fun main() {
 
     println("Part 1: ${part1(root)}")
     println("Part 2: ${part2(root)}")
-}
-
-class Node(val name: String, val isLeaf: Boolean, val parent: Node?) {
-
-    var size: Int = 0
-
-    constructor(name: String, isLeaf: Boolean, parent: Node?, size: Int) : this(name, isLeaf, parent) {
-        this.size = size
-    }
-
-    val children = mutableListOf<Node>()
-
-    fun addChild(child: Node) {
-        children.add(child)
-    }
-
-    fun calcSizes() {
-        if (isLeaf) return
-
-        size = 0
-        for (child in children) {
-            child.calcSizes()
-            size += child.size
-        }
-    }
-
-    fun part1(): Int {
-        if (isLeaf)
-            return 0
-
-        var ans = 0
-        if (size <= sizeLimit) {
-            ans += size
-        }
-
-        for (child in children) {
-            ans += child.part1()
-        }
-
-        return ans
-    }
-
-    fun part2(removeAtLeast: Int): Int {
-        if (isLeaf) return Int.MAX_VALUE
-
-        var ans = Int.MAX_VALUE
-        if (size >= removeAtLeast) ans = minOf(ans, size)
-        for (child in children)
-            ans = minOf(ans, child.part2(removeAtLeast))
-
-        return ans
-    }
-
 }
